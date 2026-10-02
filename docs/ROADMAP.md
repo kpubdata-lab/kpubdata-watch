@@ -149,21 +149,30 @@ Automatic seasonality modeling
         ↓
 11. Read API
         ↓
-12. Minimal Public Status
+12. Public UI Foundation (Brand v2 tokens, Logo/lockup, status components, theme)
         ↓
-13. UI Lab
+13. Minimal Public Status
+        ↓
+14. UI Lab
     ├─ 10 datasets
     ├─ 50 datasets
     └─ 150 datasets
         ↓
-14. 10 Real Datasets
+15. 10 Real Datasets
         ↓
-15. History Accumulation
+16. History Accumulation
         ↓
-16. Real Incident / Change Replay
+17. Real Incident / Change Replay
         ↓
-17. Production Hardening
+18. Production Hardening
 ```
+
+**Public UI Foundation** (#68, ADR 0012)은 Minimal Public Status와 UI Lab이 쓸
+Brand v2 토큰/로고/상태 컴포넌트를 먼저 자리 잡는다 — Watch 전용 색이나 레이아웃을
+새로 설계하는 단계가 아니라, Studio의 Brand v2를 Watch 코드에 옮기는 단계다. 이
+단계를 11(Read API)과 13(Minimal Public Status) 사이에 두는 이유는 Read Model이
+먼저 안정돼야 하고, Public Status와 UI Lab의 모든 prototype이 같은 토큰을 전제로
+만들어져야 하기 때문이다.
 
 UI 디자인 결정을 기다리느라 Observation Engine 개발을 멈추지 않는다.
 
@@ -195,11 +204,12 @@ Experimental UI
 | 8 | Quality (Volume · Completeness) | #11 |
 | 9–10 | Detection / Change / Incident · Health Aggregation | #36 |
 | 11 | Read API | #38 |
-| 12 | Minimal Public Status | #41 |
-| 13 | UI Lab (10 / 50 / 150) | #40 |
-| 14 | 10 Real Datasets | #42 |
-| 15–16 | History Accumulation · Real Incident / Change Replay | #43 |
-| 17 | Production Hardening | #44 |
+| 12 | Public UI Foundation (Brand v2) | #68 (see linked issues) |
+| 13 | Minimal Public Status | #41 |
+| 14 | UI Lab (10 / 50 / 150) | #40 |
+| 15 | 10 Real Datasets | #42 |
+| 16–17 | History Accumulation · Real Incident / Change Replay | #43 |
+| 18 | Production Hardening | #44 |
 
 ## Definition of Done — MVP
 

@@ -17,6 +17,7 @@ KPubData Watch 의 설계 결정. 형식은 KPubData 시리즈의 ADR 과 같다
 | [0009](0009-confirmation-counts-global-default.md) | 확인 횟수는 전역 기본(2 실패 개시·2 성공 해소)을 두고 Registry 가 failures 만 1~3 조정 (#31) |
 | [0010](0010-public-history-default-period.md) | 공개 History 기본 기간은 30일, 조회 상한은 90일이다 (#32) |
 | [0011](0011-notice-entity-manual-linking.md) | 공지는 독립 엔티티이고 Incident·Change 에 N:N 수동 링크된다 (#35) |
+| [0012](0012-brand-v2-visual-identity.md) | KPubData Watch 는 KPubData Studio Brand v2 를 canonical visual identity 로 채택한다 — information architecture 만 계속 실험한다 (#68) |
 
 ## PRD 결정 로그 대응표
 
@@ -46,6 +47,10 @@ PRD v1.0 Draft 가 확정한 결정 D-001~D-020 이 어느 ADR 에 기록됐는�
 | D-018 | Official Notice 자동 Crawling은 MVP P0가 아니다. | [ADR 0001](0001-mvp-scope-public-status.md) |
 | D-019 | Latency는 기본적으로 Metric이며 Health Dimension이 아니다. | [ADR 0002](0002-one-health-many-checks.md) |
 | D-020 | Provider / Category / Health / Check 기준 Filter 확장을 고려한다. | [ADR 0005](0005-ui-lab-and-single-repository.md) |
+| D-021 | KPubData Watch는 KPubData Studio Brand v2와 동일한 visual identity를 사용한다. | [ADR 0012](0012-brand-v2-visual-identity.md) |
+| D-022 | UI Lab에서 실험하는 것은 information architecture와 layout이며, brand palette / 로고 / typography / status semantics는 실험하지 않는다. | [ADR 0012](0012-brand-v2-visual-identity.md) |
+| D-023 | Light theme를 canonical visual baseline으로 사용한다. Dark mode는 alternative user theme다. | [ADR 0012](0012-brand-v2-visual-identity.md) |
+| D-024 | Brand color와 status color를 분리한다. Fresh Mint를 Healthy 표현에 사용하지 않는다. | [ADR 0012](0012-brand-v2-visual-identity.md) |
 
 ## 새 결정을 추가할 때
 

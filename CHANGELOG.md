@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **ADR 0012** (#68): KPubData Watch adopts KPubData Studio's Brand v2 visual identity as canonical — logo geometry, brand palette, status-color semantics, typography, density, light/dark theme hierarchy and accessibility rules — while information architecture (Status Page vs Provider Grouped vs Issues First) stays experimental (D-021–D-024). `docs/UI.md` replaces "색상 세부 규칙" in the not-fixed list with a `Visual Identity` section documenting the Studio→Watch token mapping (including Studio's actual dark status-token values), the Health→status-token mapping, the Change-vs-Health axis and its neutral-surface treatment (Studio defines no informational/neutral status token, so Watch uses `--muted`/`--border`/`--foreground` rather than inventing a colour — left open for the token-foundation issue), and adds UI Evaluation Criteria 11–15. `docs/ROADMAP.md` inserts a "Public UI Foundation (Brand v2)" step before Minimal Public Status and UI Lab; `AGENTS.md`'s mirrored build order is updated to match.
+
 ### Changed
 
 - Completeness null handling in `docs/detectors/quality.md` now follows kpubdata's field types (#60): numeric fields (`integer`/`number`) treat `""` and `-` as no value exactly as kpubdata's `_DEFAULT_NULL_MARKERS` does (kpubdata#615); string fields treat only JSON `null` and an empty string as no value and count `-` as a value, unless a field-level registry declaration backed by measurement says otherwise. `N/A` is dropped from the rule for lack of measured evidence, and fields kpubdata declares in `LicenseSpec.pii_columns` are never chosen for completeness, since its evidence keeps original representations and ADR 0006 (D-017) stores no personal data.
