@@ -2,7 +2,7 @@
 
 ## 상태
 
-채택됨(Accepted) — 2026-10-02 (#75)
+채택됨(Accepted) — 2026-10-02 (#78)
 
 ## 요약 (English summary)
 

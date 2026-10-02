@@ -1,4 +1,4 @@
-"""`scripts/build_demo.py` renders the Public Status demo without error (#75).
+"""`scripts/build_demo.py` renders the Public Status demo without error (#78).
 
 GitHub Pages hosts a fixture-based demo, never the live service, so the only
 thing this script must prove is that the template renders every health state

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the Public Status page with fixture data into a static demo site (#75).
+"""Render the Public Status page with fixture data into a static demo site (#78).
 
 GitHub Pages hosts a fixture-based demo of the Public Status page, not the live
 service (see docs/decisions — the production service stays FastAPI + worker +
