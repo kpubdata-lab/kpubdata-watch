@@ -51,6 +51,7 @@ def load_datasets(path: Path = FIXTURES_PATH) -> list[dict[str, Any]]:
             raise ValueError(f"{row['dataset_id']}: unknown health {row['health']!r}")
     return rows
 
+
 def health_counts(datasets: list[dict[str, Any]]) -> dict[str, int]:
     """Count datasets per health state, in `HEALTH_ORDER`."""
     counts = dict.fromkeys(HEALTH_ORDER, 0)
