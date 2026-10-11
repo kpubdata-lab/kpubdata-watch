@@ -137,6 +137,20 @@ Watch Engine은 UI Lab에 의존하면 안 된다.
 스스로 정의하지 않는다 (#68). `scripts/check_brand_tokens.py` 가 `ui-lab/` 아래 CSS · HTML 이 토큰을
 다시 정의하면 실패한다.
 
+### Prototype 렌더링
+
+`uv run python scripts/build_ui_lab.py --output _lab` 가 `ui-lab/` 의 prototype 을 배포 데모와 같은
+read model · `demo/fixtures` 로 렌더링한다. 배포 빌드(`build_demo.py`)는 UI Lab 을 포함하지 않는다.
+
+| Prototype | 경로 | 상태 |
+|---|---|---|
+| C. Issues First (#99 의 Overview 구성을 보존) | `ui-lab/issues-first/` → `/lab/issues/` | 있음 (#106) |
+| A. Status Page | `ui-lab/status-page/` → `/lab/status/` | 아직 없음 (#33) |
+| B. Provider Grouped | `ui-lab/provider-grouped/` → `/lab/provider/` | 아직 없음 (#33) |
+
+#33 의 비교는 A · B 가 같은 위치에 같은 방식으로 추가된 뒤, 위 평가 기준과 10/50/150 Dataset fixture 로
+진행한다.
+
 ## UI Lab Fixtures
 
 <small>PRD §37</small>
