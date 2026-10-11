@@ -34,15 +34,15 @@ body:
       label: Required Verification (POLICY 18)
       description: |
         이 이슈가 완료되었다고 판단하려면 어떤 수준의 기계 검증이 필요한가요?
-        kpubdata POLICY 18 의 V0~V5 중 하나를 고릅니다. 잘 모르겠으면 V0 로 두면
+        kpubdata POLICY 18 의 검증 수준(V0~V5) 중 하나를 고릅니다. 잘 모르겠으면 정적 검사(V0)로 두면
         triage 가 정합니다.
       options:
-        - V0 — Static (lint, typecheck, schema validation)
-        - V1 — Unit (unit tests)
-        - V2 — Replay / Contract (fixture-based contract tests)
-        - V3 — Component Integration
-        - V4 — Live Provider (real provider API calls)
-        - V5-replay — Product E2E (replay)
-        - V5-live — Product E2E (live)
+        - Static checks (V0) — lint, typecheck, schema validation
+        - Unit tests (V1)
+        - Replay and contract tests (V2) — fixture-based
+        - Component integration tests (V3)
+        - Live provider API calls (V4) — real provider API calls
+        - Product end-to-end, replay (V5-replay)
+        - Product end-to-end, live (V5-live)
     validations:
       required: true
