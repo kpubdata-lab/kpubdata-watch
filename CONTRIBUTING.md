@@ -62,8 +62,8 @@ uv run pytest -m live
 
 ## Issues carry a Required Verification
 
-Every issue states the machine verification that proves it done — V0 static
-checks through V5-live product E2E, the levels of kpubdata
+Every issue states the machine verification that proves it done — from static
+checks (V0) through the live product end-to-end run (V5-live), the levels of kpubdata
 [POLICY.md §18](https://github.com/kpubdata-lab/kpubdata/blob/main/docs/governance/POLICY.md).
 The issue templates ask for the level, and `scripts/check_governance.py` fails
 CI when a template stops asking. A pull request that closes an issue meets that

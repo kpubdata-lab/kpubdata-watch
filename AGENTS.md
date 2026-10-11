@@ -75,6 +75,15 @@ are canonical.
 - **Branch protection requires only the aggregate `CI gate` job.** Never require a
   matrix-suffixed name: an absent required check blocks every pull request for ever.
 
+## Write codes in plain words
+
+Never write a review level (`R0`..`R3`) or a verification level (`V0`..`V5`) alone.
+Meaning first, code in parentheses: "unit tests (V1)", "an approval from someone other
+than the author (R3)". The glossary is
+[kpubdata POLICY 0.1 and 0.2](https://github.com/kpubdata-lab/kpubdata/blob/main/docs/governance/POLICY.md#codes).
+`scripts/check_plain_codes.py` fails CI on a bare code in tracked Markdown and issue
+forms.
+
 ## Labels — what an agent applies
 
 POLICY 2.1, 2.1.1 and 2.1.2 are the label reference. What is specific to agents:
