@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import "components/primitives.html" as ui with context %}
+{#-
+  UI Lab prototype B, Provider Grouped (#33). The health distribution at the top,
+  then one panel per provider, the provider with the worst state first, each with
+  its own per-state counts and its datasets (worst first). A provider's state is
+  never collapsed to one colour: the counts say how many datasets are in which
+  state (docs/UI.md "Provider Grouping"). Context is `overview_context`'s plus
+  `provider_groups`, both from scripts/.
+-#}
+
+{% block title %}Provider Grouped (UI Lab) — KPubData Watch{% endblock %}
+{% block description %}UI Lab prototype: the Provider Grouped overview layout, for the layout comparison in #33.{% endblock %}
+
+{% block content %}
+<p class="preview-meta"><strong>UI Lab</strong> · 레이아웃 후보 B (Provider Grouped) · {{ fixture_label }} · 배포 데모에 포함되지 않는 실험용 프로토타입입니다.</p>
+
+<section class="status-header">
+  <h1>Public Data Health</h1>
+  <p class="status-subtitle">{{ total }} monitored datasets · {{ provider_groups | length }} providers</p>
+</section>
+
+<section class="summary" aria-label="Health summary">
+  {{ ui.health_summary(headline, status_ratio, counts) }}
+</section>
+
+{% for group in provider_groups %}
+{% call ui.panel(group.name, "provider-" ~ loop.index, group.total) %}
+<ul class="summary-counts" aria-label="{{ group.name }} health">
+  {%- for key in health_order %}
+  {%- if group.counts[key] %}
+  <li class="count count-{{ key }}">
+    <span class="count-icon" aria-hidden="true">{{ health_meta[key].icon }}</span>
+    <span class="count-value">{{ group.counts[key] }}</span>
+    <span class="count-label">{{ health_meta[key].label }}</span>
+  </li>
+  {%- endif %}
+  {%- endfor %}
+</ul>
+<ul class="dataset-list">
+  {% for d in group.rows %}
+  {{ ui.dataset_row(d) }}
+  {% endfor %}
+</ul>
+{% endcall %}
+{% endfor %}
+{% endblock %}

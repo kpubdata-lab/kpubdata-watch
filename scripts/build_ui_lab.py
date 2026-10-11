@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the UI Lab prototypes with the demo fixtures (#106, #33).
+"""Render the UI Lab prototypes with the demo and the sized fixtures (#106, #33).
 
 UI Lab holds disposable layout experiments on the same read model the deployed
 demo uses (docs/UI.md, ADR 0005). This script renders each prototype under
@@ -7,8 +7,15 @@ demo uses (docs/UI.md, ADR 0005). This script renders each prototype under
 `scripts/build_demo.py`: the deployed demo never includes UI Lab, and nothing in
 the engine or the product templates depends on it.
 
+    lab/index.html            every candidate at every catalog size
+    lab/status/index.html     Status Page (A)
+    lab/provider/index.html   Provider Grouped (B)
     lab/issues/index.html     Issues First (C)
+    lab/<name>/<size>/        the same prototype at 10, 50 and 150 datasets
     static/                   the shared CSS, script and images (Brand v2 tokens)
+
+The page without a size reads `demo/fixtures`; a size reads
+`ui-lab/fixtures/<size>-datasets/` (`scripts/gen_ui_lab_fixtures.py`).
 
 Usage:
     python scripts/build_ui_lab.py [--output _lab] [--fixtures demo/fixtures]
@@ -22,6 +29,7 @@ import shutil
 import sys
 from pathlib import Path
 from types import ModuleType
+from typing import Any
 
 from jinja2 import ChoiceLoader, FileSystemLoader
 
@@ -32,8 +40,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 LAB_DIR = REPO_ROOT / "ui-lab"
 FIXTURES_DIR = REPO_ROOT / "demo" / "fixtures"
 DEFAULT_OUTPUT = REPO_ROOT / "_lab"
-# prototype template (below ui-lab/) -> page directory in the output
-PROTOTYPES = {"issues-first/index.html": "lab/issues"}
+# prototype template (below ui-lab/) -> (page directory in the output, label)
+PROTOTYPES = {
+    "status-page/index.html": ("lab/status", "A. Status Page"),
+    "provider-grouped/index.html": ("lab/provider", "B. Provider Grouped"),
+    "issues-first/index.html": ("lab/issues", "C. Issues First"),
+}
+SIZES = (10, 50, 150)
 
 
 def _load_build_demo() -> ModuleType:
@@ -48,7 +61,38 @@ def _load_build_demo() -> ModuleType:
     return module
 
 
-def render(template_name: str, fixtures_dir: Path = FIXTURES_DIR, depth: int = 2) -> str:
+def provider_groups(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Group dataset rows by provider, the provider with the worst state first.
+
+    A provider keeps its per-state counts rather than one colour of its own
+    (docs/UI.md "Provider Grouping"); rows stay in the order they came in.
+    """
+    demo = _load_build_demo()
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        groups.setdefault(row["provider"], []).append(row)
+    result = [
+        {
+            "name": name,
+            "total": len(members),
+            "counts": demo.health_counts(members),
+            "rows": members,
+            "worst": min(demo._HEALTH_RANK[row["health"]] for row in members),
+        }
+        for name, members in groups.items()
+    ]
+    result.sort(
+        key=lambda g: (g["worst"], -(g["total"] - g["counts"]["healthy"]), g["name"]),
+    )
+    return result
+
+
+def render(
+    template_name: str,
+    fixtures_dir: Path = FIXTURES_DIR,
+    depth: int = 2,
+    fixture_label: str = "demo fixtures",
+) -> str:
     """Render one prototype; `depth` is how many directories below the output root it sits."""
     demo = _load_build_demo()
     snapshot = ProductSnapshot.from_directory(fixtures_dir)
@@ -61,19 +105,51 @@ def render(template_name: str, fixtures_dir: Path = FIXTURES_DIR, depth: int = 2
     context = demo.overview_context(snapshot, built_pages)
     context["datasets"] = demo.dataset_rows(snapshot)
     context["datasets"].sort(key=lambda row: demo._HEALTH_RANK[row["health"]])
+    context["provider_groups"] = provider_groups(context["datasets"])
+    context["fixture_label"] = fixture_label
     shell = demo._shell(snapshot, root="../" * depth, active_nav="overview")
     shell["built_pages"] = built_pages
     return env.get_template(template_name).render(**context, **shell)
 
 
+def fixture_sets(fixtures_dir: Path) -> list[tuple[str, str, Path]]:
+    """(page subdirectory, label, fixtures) for the demo fixtures and each sized set."""
+    return [("", "demo fixtures", fixtures_dir)] + [
+        (str(size), f"{size} datasets", LAB_DIR / "fixtures" / f"{size}-datasets") for size in SIZES
+    ]
+
+
 def build(output_dir: Path = DEFAULT_OUTPUT, fixtures_dir: Path = FIXTURES_DIR) -> Path:
-    """Render every prototype into `output_dir`, with the shared static assets."""
-    for template_name, page_dir in PROTOTYPES.items():
-        page = output_dir / page_dir / "index.html"
-        page.parent.mkdir(parents=True, exist_ok=True)
-        page.write_text(
-            render(template_name, fixtures_dir, len(Path(page_dir).parts)), encoding="utf-8"
-        )
+    """Render every prototype at every catalog size into `output_dir`, with the static assets."""
+    index: list[dict[str, Any]] = []
+    for template_name, (page_dir, label) in PROTOTYPES.items():
+        pages = []
+        for sub, fixture_label, directory in fixture_sets(fixtures_dir):
+            target = Path(page_dir) / sub
+            page = output_dir / target / "index.html"
+            page.parent.mkdir(parents=True, exist_ok=True)
+            page.write_text(
+                render(template_name, directory, len(target.parts), fixture_label),
+                encoding="utf-8",
+            )
+            pages.append(
+                {
+                    "label": fixture_label,
+                    "href": (Path(*target.parts[1:]) / "index.html").as_posix(),
+                }
+            )
+        index.append({"label": label, "pages": pages})
+    demo = _load_build_demo()
+    snapshot = ProductSnapshot.from_directory(fixtures_dir)
+    env = environment(TEMPLATES_DIR)
+    env.loader = ChoiceLoader(
+        [FileSystemLoader(str(LAB_DIR)), FileSystemLoader(str(TEMPLATES_DIR))]
+    )
+    shell = demo._shell(snapshot, root="../", active_nav="overview")
+    shell["built_pages"] = frozenset()
+    (output_dir / "lab" / "index.html").write_text(
+        env.get_template("index.html").render(prototypes=index, **shell), encoding="utf-8"
+    )
     static_out = output_dir / "static"
     if static_out.exists():
         shutil.rmtree(static_out)

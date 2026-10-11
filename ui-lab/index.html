@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{#-
+  The UI Lab index (#33): every Overview layout candidate at every catalog size,
+  so the candidates can be compared side by side. It decides nothing.
+-#}
+
+{% block title %}UI Lab — KPubData Watch{% endblock %}
+{% block description %}UI Lab: the Overview layout candidates at 10, 50 and 150 datasets.{% endblock %}
+
+{% block content %}
+<p class="preview-meta"><strong>UI Lab</strong> · 배포 데모에 포함되지 않는 실험용 프로토타입입니다.</p>
+
+<section class="status-header">
+  <h1>Overview layout candidates</h1>
+  <p class="status-subtitle">Same read model, same Brand v2 tokens; only the layout differs.</p>
+</section>
+
+<section class="panel" aria-labelledby="candidates">
+  <div class="panel-head">
+    <h2 class="panel-title" id="candidates">Candidates by catalog size</h2>
+  </div>
+  <ul class="dataset-list">
+    {%- for prototype in prototypes %}
+    <li class="dataset-row">
+      <div class="dataset-main"><span class="dataset-name">{{ prototype.label }}</span></div>
+      <p class="dataset-provider">
+        {%- for fixture in prototype.pages %}
+        <a href="{{ fixture.href }}">{{ fixture.label }}</a>{% if not loop.last %} · {% endif %}
+        {%- endfor %}
+      </p>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{% endblock %}

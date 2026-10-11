@@ -140,16 +140,17 @@ Watch Engine은 UI Lab에 의존하면 안 된다.
 ### Prototype 렌더링
 
 `uv run python scripts/build_ui_lab.py --output _lab` 가 `ui-lab/` 의 prototype 을 배포 데모와 같은
-read model · `demo/fixtures` 로 렌더링한다. 배포 빌드(`build_demo.py`)는 UI Lab 을 포함하지 않는다.
+read model 로 렌더링한다. 배포 빌드(`build_demo.py`)는 UI Lab 을 포함하지 않는다.
 
 | Prototype | 경로 | 상태 |
 |---|---|---|
+| A. Status Page | `ui-lab/status-page/` → `/lab/status/` | 있음 (#33) |
+| B. Provider Grouped | `ui-lab/provider-grouped/` → `/lab/provider/` | 있음 (#33) |
 | C. Issues First (#99 의 Overview 구성을 보존) | `ui-lab/issues-first/` → `/lab/issues/` | 있음 (#106) |
-| A. Status Page | `ui-lab/status-page/` → `/lab/status/` | 아직 없음 (#33) |
-| B. Provider Grouped | `ui-lab/provider-grouped/` → `/lab/provider/` | 아직 없음 (#33) |
 
-#33 의 비교는 A · B 가 같은 위치에 같은 방식으로 추가된 뒤, 위 평가 기준과 10/50/150 Dataset fixture 로
-진행한다.
+각 prototype 은 `demo/fixtures`(경로 그대로)와 10 · 50 · 150 Dataset fixture(`/lab/<이름>/10/`,
+`/50/`, `/150/`)로 렌더링되고, `/lab/` 의 색인 페이지가 3 × 4 조합을 모두 연결한다. 이 PR 은 비교할
+재료를 마련할 뿐 **layout 을 고르지 않는다** — 선택은 #33 에서 평가 기준과 함께 오너가 한다.
 
 ## UI Lab Fixtures
 
@@ -178,6 +179,12 @@ unknown-monitoring.json
 ```
 
 이를 통해 Dataset 규모가 커져도 UI가 유지되는지 검증한다.
+
+현재 있는 것은 규모별 fixture 셋이다: `ui-lab/fixtures/{10,50,150}-datasets/` (각각 `demo/fixtures`
+와 같은 다섯 파일, `ProductSnapshot` 이 참조까지 검증한다). `scripts/gen_ui_lab_fixtures.py` 가 Dataset
+수를 seed 로 결정적으로 생성하며(Critical 4% · Degraded 10% · Unknown 4% 와 소수의 informational
+Change, 각 최소 1건), 손으로 고치지 않는다. 테스트가 커밋된 파일과 생성기 출력의 일치를 확인한다
+(`gen_ui_lab_fixtures.py --check`). 위 목록의 상태별 fixture(`all-healthy` 등)는 아직 없다.
 
 ## UI Experiment A — Status Page
 

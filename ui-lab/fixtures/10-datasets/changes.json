@@ -1,0 +1,3 @@
+[
+  {"id": "chg-lab-001", "dataset_id": "kostat.demo_002", "change_type": "contract", "severity": "info", "title": "Contract changed", "summary": "The field productEngName was added.", "detected_at": "2026-10-02T04:15:00+09:00", "diff": {"added": ["productEngName:string"], "removed": [], "changed": []}, "health_impact": "none", "related_incident_id": null}
+]
