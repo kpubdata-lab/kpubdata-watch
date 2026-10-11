@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "components/primitives.html" as ui with context %}
+{#-
+  UI Lab prototype A, Status Page (#33). The familiar status-page shape: the health
+  distribution at the top, then one flat list of every dataset, worst first. No
+  issue panel and no grouping; the rows alone carry the reason. It reads the same
+  read model as the deployed demo and links only the shared Brand v2 token file.
+  Context is `overview_context`'s, from scripts/build_demo.py.
+-#}
+
+{% block title %}Status Page (UI Lab) — KPubData Watch{% endblock %}
+{% block description %}UI Lab prototype: the Status Page overview layout, for the layout comparison in #33.{% endblock %}
+
+{% block content %}
+<p class="preview-meta"><strong>UI Lab</strong> · 레이아웃 후보 A (Status Page) · {{ fixture_label }} · 배포 데모에 포함되지 않는 실험용 프로토타입입니다.</p>
+
+<section class="status-header">
+  <h1>Public Data Health</h1>
+  <p class="status-subtitle">{{ total }} monitored datasets</p>
+</section>
+
+<section class="summary" aria-label="Health summary">
+  {{ ui.health_summary(headline, status_ratio, counts) }}
+</section>
+
+{% call ui.panel("All Datasets", "datasets", total) %}
+<ul class="dataset-list">
+  {% for d in datasets %}
+  {{ ui.dataset_row(d) }}
+  {% endfor %}
+</ul>
+{% endcall %}
+{% endblock %}
