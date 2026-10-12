@@ -5,7 +5,7 @@
   to its detail page. The filters are a progressive enhancement: static/catalog.js
   reveals the form and filters rows on their data attributes. Context: `rows`
   (each with `check_results`, the dataset's four CheckResult objects, for the
-  Checks column's check_matrix cell), `providers` ((id, name) pairs, sorted),
+  Checks column's check_matrix cell), `providers` ((id, name, dataset count) triples, sorted by name),
   `total`.
 -#}
 
@@ -28,8 +28,8 @@
     <span class="filter-label">Provider</span>
     <select name="provider">
       <option value="">All</option>
-      {%- for id, name in providers %}
-      <option value="{{ id }}">{{ name }}</option>
+      {%- for id, name, count in providers %}
+      <option value="{{ id }}">{{ name }} ({{ count }})</option>
       {%- endfor %}
     </select>
   </label>

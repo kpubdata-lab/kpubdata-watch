@@ -33,6 +33,7 @@ import argparse
 import json
 import re
 import shutil
+from collections import Counter
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -372,10 +373,16 @@ def render_dataset(snapshot: ProductSnapshot, dataset_id: str) -> str:
         (i for i in snapshot.incidents if i.dataset_id == dataset_id), **newest_first
     )
     changes = sorted((c for c in snapshot.changes if c.dataset_id == dataset_id), **newest_first)
+    # One timeline of incidents and changes, newest first (ADR 0015).
+    timeline = sorted(
+        [("incident", i) for i in incidents] + [("change", c) for c in changes],
+        key=lambda entry: entry[1].detected_at,
+        reverse=True,
+    )
     return template.render(
         dataset=snapshot.dataset_detail(dataset_id),
         incidents=incidents,
-        changes=changes,
+        timeline=timeline,
         changes_by_id={c.id: c for c in snapshot.changes},
         history=snapshot.history(dataset_id),
         **_shell(snapshot, root="../../", active_nav="datasets"),
@@ -415,9 +422,11 @@ def render_catalog(snapshot: ProductSnapshot) -> str:
                 ),
             }
         )
-    providers = sorted(
-        {(d.provider.id, d.provider.name) for d in snapshot.datasets}, key=lambda p: p[1]
-    )
+    per_provider = Counter((d.provider.id, d.provider.name) for d in snapshot.datasets)
+    providers = [
+        (provider_id, name, count)
+        for (provider_id, name), count in sorted(per_provider.items(), key=lambda p: p[0][1])
+    ]
     return (
         environment(TEMPLATES_DIR)
         .get_template("catalog.html")

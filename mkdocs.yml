@@ -88,3 +88,4 @@ nav:
       - "0012 Pages 데모": decisions/0012-pages-hosts-a-fixture-demo-not-the-service.md
       - "0013 Overview 와 History": decisions/0013-overview-now-and-history-views.md
       - "0014 Brand v2 시각 정체성": decisions/0014-brand-v2-visual-identity.md
+      - "0015 화면별 레이아웃": decisions/0015-layout-per-screen-overview-datasets-detail.md

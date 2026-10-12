@@ -127,13 +127,13 @@ def test_unknown_is_not_presented_as_critical(site: Path) -> None:
     assert "데이터셋 장애가 아님" in html
 
 
-def test_a_healthy_dataset_has_an_empty_incident_list(site: Path) -> None:
-    incidents = section(page(site, "visitkorea-tourism"), "Recent Incidents")
-    assert 'class="empty-state"' in incidents
+def test_a_healthy_dataset_has_an_empty_timeline(site: Path) -> None:
+    timeline = section(page(site, "visitkorea-tourism"), "Timeline")
+    assert 'class="empty-state"' in timeline
 
 
 def test_an_informational_change_is_listed_without_a_health_colour(site: Path) -> None:
-    changes = section(page(site, "pps.product_list"), "Recent Changes")
+    changes = section(page(site, "pps.product_list"), "Timeline")
     assert "Contract changed" in changes
     assert '<li class="diff-added">' in changes
     assert "status-" not in changes
@@ -156,3 +156,20 @@ def test_the_overview_links_each_dataset_to_its_detail_page(site: Path) -> None:
 
 def test_the_detail_template_has_no_raw_hex() -> None:
     assert not HEX_COLOR.search((TEMPLATES_DIR / "dataset_detail.html").read_text(encoding="utf-8"))
+
+
+def test_the_timeline_comes_first_and_lists_incidents_and_changes_newest_first(site: Path) -> None:
+    html = page(site, "datago.apt_rent")
+    order = [
+        "<h1>아파트 전월세 실거래가</h1>",
+        ">Timeline</h2>",
+        ">Current Issue</h2>",
+        ">Health Checks</h2>",
+        ">Last 30 Days</h2>",
+    ]
+    positions = [html.index(marker) for marker in order]
+    assert positions == sorted(positions)
+    assert ">Recent Incidents</h2>" not in html and ">Recent Changes</h2>" not in html
+    stamps = re.findall(r'<time class="timestamp" datetime="([^"]+)"', section(html, "Timeline"))
+    assert len(stamps) >= 1
+    assert stamps == sorted(stamps, reverse=True)

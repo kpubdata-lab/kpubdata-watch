@@ -150,7 +150,25 @@ read model 로 렌더링한다. 배포 빌드(`build_demo.py`)는 UI Lab 을 포
 
 각 prototype 은 `demo/fixtures`(경로 그대로)와 10 · 50 · 150 Dataset fixture(`/lab/<이름>/10/`,
 `/50/`, `/150/`)로 렌더링되고, `/lab/` 의 색인 페이지가 3 × 4 조합을 모두 연결한다. 이 PR 은 비교할
-재료를 마련할 뿐 **layout 을 고르지 않는다** — 선택은 #33 에서 평가 기준과 함께 오너가 한다.
+재료를 마련했고, 선택은 아래 "화면별 layout 결정"에 기록한 대로 오너가 했다. prototype 은 비교 자료로
+그대로 둔다.
+
+### 화면별 layout 결정
+
+[ADR 0015](decisions/0015-layout-per-screen-overview-datasets-detail.md) (#33, 오너 결정 2026-10-12).
+세 후보는 서로 배타적이지 않아 화면마다 정한다.
+
+| 화면 | 결정 | 구현 |
+|---|---|---|
+| Overview (`/`) | 상태 요약 → Active Issues → Recent Changes → Dataset 체크 매트릭스. 문제를 먼저 본다 (Status Page 요약 + Issues First) | `public_status.html` |
+| Datasets (`/datasets/`) | 평평한 검색 목록 + Provider 필터. Provider 별 그룹 목록은 채택하지 않는다 | `catalog.html`, `catalog.js` |
+| Detail (`/datasets/<id>/`) | Timeline 먼저 → Current Issue → Health Checks → 최근 30일 | `dataset_detail.html` |
+
+- Provider 필터는 라벨이 붙은 기본 `select` 이고, 선택지마다 Dataset 수를 적는다. 150개에서도 키보드로
+  고를 수 있고 선택지의 합이 전체 행 수와 같다.
+- Timeline 은 그 Dataset 의 Incident 와 Change 를 한 줄기로 합쳐 최신순으로 보여준다. Change 는 Health
+  색을 쓰지 않는다 (Color Semantics).
+- 순서와 필터는 10 / 50 / 150 fixture 로 시험한다 (`tests/unit/web/test_layout_decision.py`).
 
 ## UI Lab Fixtures
 
@@ -509,6 +527,16 @@ Last successful
 
 ────────────────────────
 
+Timeline (Incident 와 Change, 최신순)
+
+Sep 29 14:20
+Contract changed
++ productEngName
+
+(Incident 없음)
+
+────────────────────────
+
 Checks
 
 Availability
@@ -522,20 +550,6 @@ PASS
 
 Quality
 PASS
-
-────────────────────────
-
-Recent Changes
-
-Sep 29 14:20
-Contract changed
-+ productEngName
-
-────────────────────────
-
-Recent Incidents
-
-None
 ```
 
 ## Why Was This Detected?
