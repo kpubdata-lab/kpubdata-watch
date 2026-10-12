@@ -1,0 +1,3 @@
+# A planted, non-secret test value in the replay gate's tests (#43), committed before
+# it was replaced with a low-entropy one. The pull request's range still holds it.
+c3ea5a9d16425b6e6295b5efef3a319bb18ed543:tests/unit/scripts/test_check_replay_cases.py:generic-api-key:127

@@ -124,7 +124,7 @@ def test_an_untraceable_manifest_fails(
 @pytest.mark.parametrize(
     "leak",
     [
-        '{"fields": ["a"], "serviceKey": "abcd1234efgh"}',
+        '{"fields": ["a"], "serviceKey": "planted-xxxx"}',
         '{"fields": ["a"], "url": "https://x/y?ServiceKey=abcd1234&n=1"}',
         '{"fields": ["a"], "crtfc_key": "0123456789"}',
         '{"fields": ["a"], "API_KEY": "zzz"}',
