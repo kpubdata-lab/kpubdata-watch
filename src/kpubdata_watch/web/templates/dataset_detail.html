@@ -2,13 +2,14 @@
 {% import "components/primitives.html" as ui with context %}
 {#-
   Dataset Detail (#86, PRD §47): why this dataset is in its current Health.
-  Context: `dataset` (DatasetDetail), `incidents` and `changes` (this dataset's
-  Incident and Change details, newest first), `changes_by_id`, `history`
+  Timeline first (ADR 0015). Context: `dataset` (DatasetDetail), `incidents` (this
+  dataset's Incident details, newest first), `timeline` ((kind, event) pairs, its
+  incidents and changes merged, newest first), `changes_by_id`, `history`
   (DatasetHistory). Incident and change pages are linked only once they are built.
 -#}
 
 {% block title %}{{ dataset.name }} — KPubData Watch{% endblock %}
-{% block description %}{{ dataset.provider.name }} {{ dataset.name }}: current Health, the four checks, 30-day history, incidents and changes.{% endblock %}
+{% block description %}{{ dataset.provider.name }} {{ dataset.name }}: the timeline of incidents and changes, current Health, the four checks and 30-day history.{% endblock %}
 
 {% macro incident_title(incident) -%}
 {%- if "incident" in built_pages -%}
@@ -39,19 +40,26 @@
 
 <div class="detail-grid">
   <div class="detail-main">
-    {% call ui.panel("Health Checks", "checks") %}
-    <ul class="check-list">
-      {%- for name, label in check_labels.items() %}
-      {%- set check = dataset.checks[name] %}
-      <li class="check-row">
-        <span class="check-name">{{ label }}</span>
-        {{ ui.check_status(check.status) }}
-        {%- if check.summary %}
-        <span class="check-summary">{{ check.summary }}</span>
+    {% call ui.panel("Timeline", "timeline", timeline | length) %}
+    {%- if timeline %}
+    <ul class="event-list">
+      {%- for kind, event in timeline %}
+      <li class="event-row">
+        {{ ui.timestamp(event.detected_at | kst_minute, event.detected_at.isoformat()) }}
+        {%- if kind == "incident" %}
+        <span class="event-title">{{ incident_title(event) }}</span>
+        <span class="event-meta">{{ check_labels[event.check] }} · {{ event.status | replace("_", " ") | capitalize }}</span>
+        {%- else %}
+        <span class="event-title">{{ ui.change_badge() }} {{ change_title(event) }}</span>
+        <span class="event-meta">{{ event.summary }}</span>
+        {{ ui.contract_diff(event.diff.added, event.diff.removed, event.diff.changed) }}
         {%- endif %}
       </li>
       {%- endfor %}
     </ul>
+    {%- else %}
+    {{ ui.empty_state("최근 Incident와 Change가 없습니다.") }}
+    {%- endif %}
     {% endcall %}
 
     {% if dataset.active_incidents %}
@@ -77,43 +85,26 @@
     {% endcall %}
     {% endif %}
 
+    {% call ui.panel("Health Checks", "checks") %}
+    <ul class="check-list">
+      {%- for name, label in check_labels.items() %}
+      {%- set check = dataset.checks[name] %}
+      <li class="check-row">
+        <span class="check-name">{{ label }}</span>
+        {{ ui.check_status(check.status) }}
+        {%- if check.summary %}
+        <span class="check-summary">{{ check.summary }}</span>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+    {% endcall %}
+
     {% call ui.panel("Last 30 Days", "history") %}
     {{ ui.history_strip(history.days) }}
     <p class="panel-note">{{ history.days[0].date.isoformat() }} – {{ history.days[-1].date.isoformat() }}</p>
     {% endcall %}
 
-    {% call ui.panel("Recent Incidents", "incidents") %}
-    {%- if incidents %}
-    <ul class="event-list">
-      {%- for incident in incidents %}
-      <li class="event-row">
-        {{ ui.timestamp(incident.detected_at | kst_minute, incident.detected_at.isoformat()) }}
-        <span class="event-title">{{ incident_title(incident) }}</span>
-        <span class="event-meta">{{ check_labels[incident.check] }} · {{ incident.status | replace("_", " ") | capitalize }}</span>
-      </li>
-      {%- endfor %}
-    </ul>
-    {%- else %}
-    {{ ui.empty_state("최근 Incident가 없습니다.") }}
-    {%- endif %}
-    {% endcall %}
-
-    {% call ui.panel("Recent Changes", "changes") %}
-    {%- if changes %}
-    <ul class="event-list">
-      {%- for change in changes %}
-      <li class="event-row">
-        {{ ui.timestamp(change.detected_at | kst_minute, change.detected_at.isoformat()) }}
-        <span class="event-title">{{ ui.change_badge() }} {{ change_title(change) }}</span>
-        <span class="event-meta">{{ change.summary }}</span>
-        {{ ui.contract_diff(change.diff.added, change.diff.removed, change.diff.changed) }}
-      </li>
-      {%- endfor %}
-    </ul>
-    {%- else %}
-    {{ ui.empty_state("최근 Change가 없습니다.") }}
-    {%- endif %}
-    {% endcall %}
   </div>
 
   <aside class="detail-side">

@@ -20,6 +20,7 @@ KPubData Watch 의 설계 결정. 형식은 KPubData 시리즈의 ADR 과 같다
 | [0012](0012-pages-hosts-a-fixture-demo-not-the-service.md) | GitHub Pages 는 고정 Fixture 기반 Public Status 데모와 문서만 호스팅한다 — 운영 서비스는 FastAPI + Worker + PostgreSQL 그대로다 (#78) |
 | [0013](0013-overview-now-and-history-views.md) | Overview 는 현재 스냅샷, History 는 최근 30일로 나눈다 — 허용 시각화는 상태 이력과 Evidence 두 가지뿐이다 (#108) |
 | [0014](0014-brand-v2-visual-identity.md) | Visual identity 는 KPubData Studio Brand v2 로 고정하고, UI Lab 은 layout 만 실험한다 (#68) |
+| [0015](0015-layout-per-screen-overview-datasets-detail.md) | 화면마다 레이아웃을 정한다 — Overview 는 상태 요약 + Issues First, Datasets 는 평면 목록 + Provider 필터, Detail 은 Timeline 먼저 (#33) |
 
 ## PRD 결정 로그 대응표
 
