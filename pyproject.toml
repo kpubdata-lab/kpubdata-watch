@@ -31,7 +31,7 @@ classifiers = [
 # The reference stack from docs/ARCHITECTURE.md (PRD §32). Watch depends on KPubData
 # and on nothing else in the family (PRD D-016, docs/decisions/0004).
 dependencies = [
-  "kpubdata>=0.8.0,<0.9",
+  "kpubdata>=0.8.0,<0.11",
   "fastapi>=0.115,<1",
   "pydantic>=2.7,<3",
   "sqlalchemy>=2.0,<3",
